@@ -25,7 +25,6 @@ import {
   ArrowLeft
 } from "lucide-react";
 import { SiGoogle, SiApple } from "react-icons/si";
-import logoPath from "@assets/LOGO estate empire_1753301976738.png";
 
 type AuthMode = 'signin' | 'signup' | 'reset';
 
@@ -313,13 +312,7 @@ export default function Login() {
 
         <Card className="card-mlsbharat shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
           <CardHeader className="text-center pb-2">
-            <div className="flex items-center justify-center mb-4">
-              <img 
-                src={logoPath} 
-                alt="MLSBharat Logo" 
-                className="h-16 w-16 rounded-xl object-contain shadow-lg bg-white/50 p-2" 
-              />
-            </div>
+            
             <CardTitle className="text-2xl font-bold text-gray-900">
               {authMode === 'signin' ? "Welcome Back" : authMode === 'signup' ? "Create Account" : "Reset Password"}
             </CardTitle>
