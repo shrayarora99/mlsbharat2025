@@ -1,0 +1,357 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(219, 71%, 42%);
+  --primary-foreground: hsl(210, 100%, 98%);
+  --secondary: hsl(60, 4.8%, 95.9%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(166, 71%, 42%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+  
+  /* Accessibility Variables */
+  --focus-ring: hsl(219, 71%, 42%);
+  --focus-ring-offset: 2px;
+  --high-contrast-bg: hsl(0, 0%, 100%);
+  --high-contrast-fg: hsl(0, 0%, 0%);
+  --high-contrast-border: hsl(0, 0%, 0%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(219, 71%, 42%);
+  --primary-foreground: hsl(210, 100%, 98%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+  
+  /* Dark mode accessibility variables */
+  --focus-ring: hsl(219, 71%, 58%);
+  --high-contrast-bg: hsl(0, 0%, 0%);
+  --high-contrast-fg: hsl(0, 0%, 100%);
+  --high-contrast-border: hsl(0, 0%, 100%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    @apply antialiased bg-background text-gray-700;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold text-gray-900;
+  }
+  
+  /* Button Classes */
+  .btn-primary {
+    @apply bg-primary text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:bg-primary-hover transition-all duration-200;
+  }
+  
+  .btn-secondary {
+    @apply border border-primary text-primary px-6 py-3 rounded-lg hover:bg-primary hover:text-white transition-all duration-200;
+  }
+  
+  /* Card Classes */
+  .card-mlsbharat {
+    @apply rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-200 bg-white p-6;
+  }
+}
+
+/* Enhanced Estate Empire Theme */
+.hero-gradient {
+  background: linear-gradient(135deg, hsl(219, 71%, 42%) 0%, hsl(166, 71%, 42%) 100%);
+}
+
+.estate-gradient {
+  background: linear-gradient(135deg, 
+    hsl(219, 71%, 42%) 0%, 
+    hsl(200, 71%, 45%) 25%, 
+    hsl(180, 71%, 48%) 50%, 
+    hsl(166, 71%, 42%) 75%, 
+    hsl(150, 71%, 45%) 100%);
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .glass-effect {
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.property-card {
+  transition: all 0.3s ease;
+  border: 1px solid hsl(20, 5.9%, 90%);
+}
+
+.property-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border-color: hsl(219, 71%, 42%);
+}
+
+.dark .property-card {
+  border-color: hsl(240, 3.7%, 15.9%);
+}
+
+.dark .property-card:hover {
+  border-color: hsl(219, 71%, 58%);
+}
+
+.navbar-glass {
+  background: linear-gradient(135deg, hsl(219, 71%, 42%) 0%, hsl(219, 71%, 52%) 100%);
+}
+
+/* Custom styles for property cards */
+.property-card {
+  @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+}
+
+/* ===== ACCESSIBILITY STYLES ===== */
+
+/* High Contrast Mode */
+.high-contrast {
+  --background: var(--high-contrast-bg);
+  --foreground: var(--high-contrast-fg);
+  --card: var(--high-contrast-bg);
+  --card-foreground: var(--high-contrast-fg);
+  --popover: var(--high-contrast-bg);
+  --popover-foreground: var(--high-contrast-fg);
+  --primary: var(--high-contrast-fg);
+  --primary-foreground: var(--high-contrast-bg);
+  --secondary: var(--high-contrast-bg);
+  --secondary-foreground: var(--high-contrast-fg);
+  --muted: var(--high-contrast-bg);
+  --muted-foreground: var(--high-contrast-fg);
+  --accent: var(--high-contrast-fg);
+  --accent-foreground: var(--high-contrast-bg);
+  --border: var(--high-contrast-border);
+  --input: var(--high-contrast-bg);
+  --ring: var(--high-contrast-fg);
+}
+
+.high-contrast * {
+  border-color: var(--high-contrast-border) !important;
+}
+
+.high-contrast img {
+  filter: contrast(150%) brightness(110%);
+}
+
+.high-contrast .hero-gradient {
+  background: var(--high-contrast-fg) !important;
+  color: var(--high-contrast-bg) !important;
+}
+
+/* Font Size Adjustments */
+.font-large {
+  font-size: 120%;
+}
+
+.font-extra-large {
+  font-size: 150%;
+}
+
+.font-large * {
+  line-height: 1.6 !important;
+}
+
+.font-extra-large * {
+  line-height: 1.7 !important;
+}
+
+/* Reduced Motion */
+.reduce-motion,
+.reduce-motion * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+.reduce-motion .property-card {
+  @apply hover:shadow-lg hover:translate-y-0;
+}
+
+/* Enhanced Focus Indicators */
+.enhanced-focus *:focus {
+  outline: 3px solid var(--focus-ring) !important;
+  outline-offset: var(--focus-ring-offset) !important;
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 5px var(--focus-ring) !important;
+}
+
+.enhanced-focus button:focus,
+.enhanced-focus a:focus,
+.enhanced-focus input:focus,
+.enhanced-focus select:focus,
+.enhanced-focus textarea:focus {
+  transform: scale(1.02);
+  z-index: 10;
+  position: relative;
+}
+
+/* Screen Reader Optimizations */
+.screen-reader-optimized .sr-only {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0.25rem !important;
+  margin: 0.25rem !important;
+  overflow: visible !important;
+  clip: auto !important;
+  white-space: normal !important;
+  background: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.screen-reader-optimized [aria-hidden="true"] {
+  display: none !important;
+}
+
+.screen-reader-optimized .focus\:not-sr-only:focus {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0.5rem !important;
+  margin: 0.25rem !important;
+  overflow: visible !important;
+  clip: auto !important;
+  white-space: normal !important;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: var(--radius);
+  z-index: 50;
+}
+
+/* Skip Links */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  padding: 8px;
+  text-decoration: none;
+  border-radius: var(--radius);
+  z-index: 100;
+  font-weight: bold;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* Ensure minimum touch targets */
+@media (pointer: coarse) {
+  button, 
+  a, 
+  input, 
+  select, 
+  textarea,
+  [role="button"],
+  [role="link"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Color adjustments for better contrast */
+.high-contrast .bg-primary {
+  background-color: var(--high-contrast-fg) !important;
+  color: var(--high-contrast-bg) !important;
+}
+
+.high-contrast .text-primary {
+  color: var(--high-contrast-fg) !important;
+}
+
+.high-contrast .border-primary {
+  border-color: var(--high-contrast-fg) !important;
+}
+
+/* Focus trap for modal dialogs */
+.focus-trap {
+  position: relative;
+}
+
+.focus-trap::before,
+.focus-trap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Print styles for accessibility */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  * {
+    background: white !important;
+    color: black !important;
+  }
+  
+  a::after {
+    content: " (" attr(href) ")";
+  }
+  
+  .sr-only {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    clip: auto !important;
+  }
+}
+
+/* WhatsApp button styling */
+.whatsapp-btn {
+  background-color: hsl(122, 39%, 49%);
+}
+
+.whatsapp-btn:hover {
+  background-color: hsl(122, 39%, 44%);
+}
