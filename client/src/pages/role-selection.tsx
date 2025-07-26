@@ -16,7 +16,6 @@ import { useState } from "react";
 import { auth } from "@/lib/firebase";
 import { Home, Handshake, Search, CheckCircle, AlertCircle, Accessibility } from "lucide-react";
 import { AccessibilityPanel } from "@/components/AccessibilityPanel";
-import logoPath from "@assets/LOGO estate empire_1753301976738.png";
 
 const roleSelectionSchema = z.object({
   role: z.enum(['tenant', 'landlord', 'broker']),
@@ -155,7 +154,6 @@ export default function RoleSelection() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <img src={logoPath} alt="Estate Empire Logo" className="h-10 w-10 mr-3 rounded-full" />
               <h1 className="text-2xl font-bold text-primary">MLSBharat</h1>
             </div>
             <div className="flex items-center space-x-4">
