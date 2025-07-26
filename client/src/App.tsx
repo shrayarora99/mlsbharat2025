@@ -7,7 +7,6 @@ import { AccessibilityProvider } from '@/contexts/AccessibilityContext';
 import { useAuth } from '@/hooks/useAuth';
 import { queryClient } from './lib/queryClient';
 
-// Pages
 import Landing from '@/pages/landing';
 import Login from '@/pages/login';
 import Home from '@/pages/home';
@@ -20,7 +19,6 @@ import NotFound from '@/pages/not-found';
 
 function Router() {
   const { isAuthenticated, isLoading, user } = useAuth();
-
   const needsRoleSelection =
     isAuthenticated &&
     user &&
@@ -35,7 +33,7 @@ function Router() {
       <Switch>
         <Route path="/" component={Landing} />
         <Route path="/login" component={Login} />
-        <Route> <NotFound /> </Route>
+        <Route><NotFound /></Route>
       </Switch>
     );
   }
@@ -50,10 +48,8 @@ function Router() {
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/broker" component={BrokerDashboard} />
       <Route path="/create-listing" component={CreateListing} />
-      <Route path="/property/:id">
-        {({ id }) => <PropertyDetails id={id} />}
-      </Route>
-      <Route> <NotFound /> </Route>
+      <Route path="/property/:id">{({ id }) => <PropertyDetails id={id} />}</Route>
+      <Route><NotFound /></Route>
     </Switch>
   );
 }
@@ -63,7 +59,6 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <AccessibilityProvider>
         <TooltipProvider>
-          {/* Skip link for accessibility */}
           <a href="#main-content" className="sr-only focus:not-sr-only">
             Skip to main content
           </a>
