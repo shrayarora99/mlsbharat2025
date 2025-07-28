@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Shield, MessageCircle, Filter, Home, Handshake, Search, Phone, Mail, MapPin, LogIn } from "lucide-react";
-import logoPath from "@assets/LOGO estate empire_1753301976738.png";
+import logoPath from "../assets/mls-logo.png";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { PropertyWithOwner } from "@shared/schema";
