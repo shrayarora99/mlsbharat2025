@@ -1,47 +1,71 @@
-import { initializeApp } from 'firebase/app';
-import { 
-  getAuth, 
-  signInWithRedirect, 
-  signInWithPopup, 
-  GoogleAuthProvider, 
+// client/src/lib/firebase.ts
+import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
+import {
+  getAuth,
+  type Auth,
+  signInWithRedirect,
+  signInWithPopup,
+  GoogleAuthProvider,
   OAuthProvider,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   getRedirectResult,
   sendPasswordResetEmail,
-  updateProfile
+  updateProfile,
 } from 'firebase/auth';
 import { getAnalytics, isSupported } from 'firebase/analytics';
 
-// Debug environment variables
-console.log('Firebase Config Debug:', {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY ? 'Set' : 'Missing',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'Missing',
-  appId: import.meta.env.VITE_FIREBASE_APP_ID ? 'Set' : 'Missing'
-});
-
-const firebaseConfig = {
+// Read Vite envs (may be undefined in production)
+const cfg = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN
+    ?? (import.meta.env.VITE_FIREBASE_PROJECT_ID
+        ? `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`
+        : undefined),
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebasestorage.app`,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET
+    ?? (import.meta.env.VITE_FIREBASE_PROJECT_ID
+        ? `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebasestorage.app`
+        : undefined),
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-console.log('Final Firebase Config:', firebaseConfig);
+function hasConfig() {
+  return Boolean(cfg.apiKey && cfg.projectId && cfg.appId);
+}
 
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
+let app: FirebaseApp | null = null;
+let auth: Auth | null = null;
 
-// Initialize analytics only if supported
+// Initialize only if config is present
+function ensureInit() {
+  if (!hasConfig()) return;
+  if (!app) app = getApps().length ? getApps()[0]! : initializeApp(cfg);
+  if (!auth) auth = getAuth(app);
+}
+
+export function getFirebaseApp(): FirebaseApp | null {
+  ensureInit();
+  return app;
+}
+
+export function getFirebaseAuth(): Auth | null {
+  ensureInit();
+  return auth;
+}
+
+// Analytics only when supported and configured
 let analytics: any = null;
-isSupported().then((supported) => {
-  if (supported) {
-    analytics = getAnalytics(app);
+(async () => {
+  if (hasConfig() && (await isSupported().catch(() => false))) {
+    const a = getFirebaseApp();
+    if (a) analytics = getAnalytics(a);
   }
-});
+})();
+export { analytics };
 
-// Auth Providers
+// --- Auth Providers (safe even if not configured) ---
 const googleProvider = new GoogleAuthProvider();
 googleProvider.addScope('email');
 googleProvider.addScope('profile');
@@ -50,108 +74,47 @@ const appleProvider = new OAuthProvider('apple.com');
 appleProvider.addScope('email');
 appleProvider.addScope('name');
 
-// Export authentication functions
+function requireAuth(): Auth {
+  const a = getFirebaseAuth();
+  if (!a) throw new Error('Firebase is not configured on this deployment.');
+  return a;
+}
+
+// --- Helper functions (no-ops if not configured) ---
 export const signInWithGoogle = async (usePopup = false) => {
-  try {
-    console.log('🚀 Starting Google sign-in...');
-    console.log('📍 Current domain:', window.location.hostname);
-    console.log('🔧 Method:', usePopup ? 'popup' : 'redirect');
-    
-    if (usePopup) {
-      console.log('📱 Using popup sign-in method...');
-      const result = await signInWithPopup(auth, googleProvider);
-      console.log('✅ Popup sign-in successful:', result.user.uid);
-      return result;
-    } else {
-      console.log('🔄 Using redirect sign-in method...');
-      await signInWithRedirect(auth, googleProvider);
-    }
-  } catch (error: any) {
-    console.error('❌ Error during Google sign-in:', error);
-    console.error('🔍 Error code:', error.code);
-    console.error('📝 Error message:', error.message);
-    throw error;
-  }
+  const a = requireAuth();
+  return usePopup
+    ? await signInWithPopup(a, googleProvider)
+    : await signInWithRedirect(a, googleProvider);
 };
 
 export const handleGoogleRedirect = async () => {
-  try {
-    console.log('Checking for Google sign-in redirect result...');
-    const result = await getRedirectResult(auth);
-    if (result) {
-      console.log('Google sign-in successful:', result.user.uid);
-      return result;
-    }
-    console.log('No redirect result found');
-    return null;
-  } catch (error: any) {
-    console.error('Error handling Google redirect:', error);
-    throw new Error(`Redirect handling failed: ${error.message}`);
-  }
+  const a = requireAuth();
+  return await getRedirectResult(a);
 };
 
-// Email/Password Authentication
 export const signUpWithEmail = async (email: string, password: string, displayName?: string) => {
-  try {
-    console.log('🚀 Starting email sign-up...');
-    const result = await createUserWithEmailAndPassword(auth, email, password);
-    
-    if (displayName && result.user) {
-      await updateProfile(result.user, { displayName });
-    }
-    
-    console.log('✅ Email sign-up successful:', result.user.uid);
-    return result;
-  } catch (error: any) {
-    console.error('❌ Error during email sign-up:', error);
-    throw error;
+  const a = requireAuth();
+  const result = await createUserWithEmailAndPassword(a, email, password);
+  if (displayName && result.user) {
+    await updateProfile(result.user, { displayName });
   }
+  return result;
 };
 
 export const signInWithEmail = async (email: string, password: string) => {
-  try {
-    console.log('🚀 Starting email sign-in...');
-    const result = await signInWithEmailAndPassword(auth, email, password);
-    console.log('✅ Email sign-in successful:', result.user.uid);
-    return result;
-  } catch (error: any) {
-    console.error('❌ Error during email sign-in:', error);
-    throw error;
-  }
+  const a = requireAuth();
+  return await signInWithEmailAndPassword(a, email, password);
 };
 
 export const resetPassword = async (email: string) => {
-  try {
-    console.log('🚀 Sending password reset email...');
-    await sendPasswordResetEmail(auth, email);
-    console.log('✅ Password reset email sent');
-  } catch (error: any) {
-    console.error('❌ Error sending password reset:', error);
-    throw error;
-  }
+  const a = requireAuth();
+  await sendPasswordResetEmail(a, email);
 };
 
-// Apple Authentication
 export const signInWithApple = async (usePopup = true) => {
-  try {
-    console.log('🚀 Starting Apple sign-in...');
-    console.log('🔧 Method:', usePopup ? 'popup' : 'redirect');
-    
-    if (usePopup) {
-      console.log('📱 Using popup sign-in method...');
-      const result = await signInWithPopup(auth, appleProvider);
-      console.log('✅ Apple popup sign-in successful:', result.user.uid);
-      return result;
-    } else {
-      console.log('🔄 Using redirect sign-in method...');
-      await signInWithRedirect(auth, appleProvider);
-    }
-  } catch (error: any) {
-    console.error('❌ Error during Apple sign-in:', error);
-    console.error('🔍 Error code:', error.code);
-    console.error('📝 Error message:', error.message);
-    throw error;
-  }
+  const a = requireAuth();
+  return usePopup
+    ? await signInWithPopup(a, appleProvider)
+    : await signInWithRedirect(a, appleProvider);
 };
-
-export { analytics };
