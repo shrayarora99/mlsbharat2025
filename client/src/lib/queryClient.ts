@@ -1,5 +1,5 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
-import { auth } from "./firebase";
+import { getFirebaseAuth } from "./firebase";
 import { getIdToken } from "firebase/auth";
 
 async function throwIfResNotOk(res: Response) {
@@ -11,7 +11,8 @@ async function throwIfResNotOk(res: Response) {
 
 // Helper function to get auth headers with Firebase token
 async function getAuthHeaders(): Promise<HeadersInit> {
-  const user = auth.currentUser;
+  const firebaseAuth = getFirebaseAuth();
+  const user = firebaseAuth?.currentUser;
   if (user) {
     try {
       const token = await getIdToken(user);
@@ -23,15 +24,13 @@ async function getAuthHeaders(): Promise<HeadersInit> {
       console.error("Error getting ID token:", error);
     }
   }
-  return {
-    "Content-Type": "application/json",
-  };
+  return { "Content-Type": "application/json" };
 }
 
 export async function apiRequest(
   method: string,
   url: string,
-  data?: unknown | undefined,
+  data?: unknown,
 ): Promise<Response> {
   const headers = await getAuthHeaders();
   const res = await fetch(url, {
@@ -40,7 +39,6 @@ export async function apiRequest(
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
-
   await throwIfResNotOk(res);
   return res;
 }
